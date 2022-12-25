@@ -46,6 +46,7 @@ pub mod window;
 pub mod system;
 
 mod error;
+mod local_commands;
 mod position;
 mod proxy;
 
@@ -55,6 +56,7 @@ pub use application::Application;
 pub use application::Profiler;
 pub use clipboard::Clipboard;
 pub use error::Error;
+pub use local_commands::LocalCommands;
 pub use position::Position;
 pub use proxy::Proxy;
 pub use settings::Settings;

@@ -4,7 +4,7 @@ use iced::widget::{
     scrollable, slider, text, vertical_space,
 };
 use iced::{executor, theme, Alignment, Color};
-use iced::{Application, Command, Element, Length, Settings, Theme};
+use iced::{Application, Commands, Element, Length, Settings, Theme};
 use once_cell::sync::Lazy;
 
 static SCROLLABLE_ID: Lazy<scrollable::Id> = Lazy::new(scrollable::Id::unique);
@@ -45,69 +45,62 @@ impl Application for ScrollableDemo {
     type Theme = Theme;
     type Flags = ();
 
-    fn new(_flags: Self::Flags) -> (Self, Command<Message>) {
-        (
-            ScrollableDemo {
-                scrollable_direction: Direction::Vertical,
-                scrollbar_width: 10,
-                scrollbar_margin: 0,
-                scroller_width: 10,
-                current_scroll_offset: scrollable::RelativeOffset::START,
-            },
-            Command::none(),
-        )
+    fn new(_flags: Self::Flags, _commands: impl Commands<Message>) -> Self {
+        ScrollableDemo {
+            scrollable_direction: Direction::Vertical,
+            scrollbar_width: 10,
+            scrollbar_margin: 0,
+            scroller_width: 10,
+            current_scroll_offset: scrollable::RelativeOffset::START,
+        }
     }
 
     fn title(&self) -> String {
         String::from("Scrollable - Iced")
     }
 
-    fn update(&mut self, message: Message) -> Command<Message> {
+    fn update(
+        &mut self,
+        message: Message,
+        mut commands: impl Commands<Message>,
+    ) {
         match message {
             Message::SwitchDirection(direction) => {
                 self.current_scroll_offset = scrollable::RelativeOffset::START;
                 self.scrollable_direction = direction;
 
-                scrollable::snap_to(
+                commands.command(scrollable::snap_to(
                     SCROLLABLE_ID.clone(),
                     self.current_scroll_offset,
-                )
+                ));
             }
             Message::ScrollbarWidthChanged(width) => {
                 self.scrollbar_width = width;
-
-                Command::none()
             }
             Message::ScrollbarMarginChanged(margin) => {
                 self.scrollbar_margin = margin;
-
-                Command::none()
             }
             Message::ScrollerWidthChanged(width) => {
                 self.scroller_width = width;
-
-                Command::none()
             }
             Message::ScrollToBeginning => {
                 self.current_scroll_offset = scrollable::RelativeOffset::START;
 
-                scrollable::snap_to(
+                commands.command(scrollable::snap_to(
                     SCROLLABLE_ID.clone(),
                     self.current_scroll_offset,
-                )
+                ));
             }
             Message::ScrollToEnd => {
                 self.current_scroll_offset = scrollable::RelativeOffset::END;
 
-                scrollable::snap_to(
+                commands.command(scrollable::snap_to(
                     SCROLLABLE_ID.clone(),
                     self.current_scroll_offset,
-                )
+                ));
             }
             Message::Scrolled(offset) => {
                 self.current_scroll_offset = offset;
-
-                Command::none()
             }
         }
     }
